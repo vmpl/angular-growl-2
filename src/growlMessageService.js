@@ -156,7 +156,7 @@ angular.module("angular-growl").service("growlMessages", ['$sce', '$timeout', fu
       messages.splice(index, 1);
     }
 
-    if (typeof (message.onclose) === 'function') {
+    if (!message.isRestored && typeof (message.onclose) === 'function') {
       message.onclose();
     }
   };

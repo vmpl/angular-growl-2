@@ -236,7 +236,8 @@ angular.module('angular-growl').provider('growl', function () {
           onopen: _config.onopen,
           onrestore: _config.onrestore,
           showRestore: typeof _config.onrestore === 'function',
-          restoreTitle: _config.restoreTitle || 'Restore'
+          restoreTitle: _config.restoreTitle || 'Restore',
+          isRestored: false
         };
         return broadcastMessage(message);
       }
@@ -415,7 +416,7 @@ angular.module('angular-growl').service('growlMessages', [
         messages[index].close = true;
         messages.splice(index, 1);
       }
-      if (typeof message.onclose === 'function') {
+      if (!message.isRestored && typeof message.onclose === 'function') {
         message.onclose();
       }
     };

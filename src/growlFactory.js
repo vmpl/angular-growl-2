@@ -241,7 +241,8 @@ angular.module("angular-growl").provider("growl", function () {
         onopen: _config.onopen,
         onrestore: _config.onrestore,
         showRestore: typeof _config.onrestore === 'function',
-        restoreTitle: _config.restoreTitle || 'Restore'
+        restoreTitle: _config.restoreTitle || 'Restore',
+        isRestored: false
       };
 
       return broadcastMessage(message);
