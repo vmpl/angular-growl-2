@@ -106,9 +106,15 @@
   margin: 0 0 0 40px;
 }
 
+
 .growl-message .restore {
     display: inline-block;
     margin-left: 5px;
+    font-weight: bold;
+}
+
+.growl-message .restore:hover {
+    text-decoration: underline;
 }
 
 /*
