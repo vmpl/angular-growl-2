@@ -160,4 +160,17 @@ angular.module("angular-growl").service("growlMessages", ['$sce', '$timeout', fu
       message.onclose();
     }
   };
+
+    this.restore = function (event, message) {
+        event.stopPropagation();
+
+        var messages = this.getAllMessages(message.referenceId), index = messages.indexOf(message);
+        if (index > -1) {
+            messages[index].close = true;
+            messages.splice(index, 1);
+        }
+        if (typeof message.onrestore === 'function') {
+            message.onrestore();
+        }
+    };
 }]);

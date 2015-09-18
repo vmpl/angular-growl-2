@@ -1,5 +1,5 @@
 /**
- * angular-growl-v2 - v0.7.5 - 2015-06-17
+ * angular-growl-v2 - v0.7.5 - 2015-09-18
  * http://janstevens.github.io/angular-growl-2
  * Copyright (c) 2015 Marco Rinck,Jan Stevens; Licensed MIT
  */
@@ -81,7 +81,7 @@ angular.module('angular-growl').run([
   function ($templateCache) {
     'use strict';
     if ($templateCache.get('templates/growl/growl.html') === undefined) {
-      $templateCache.put('templates/growl/growl.html', '<div class="growl-container" ng-class="wrapperClasses()">' + '<div class="growl-item alert" ng-repeat="message in growlMessages.directives[referenceId].messages" ng-class="alertClasses(message)" ng-click="stopTimeoutClose(message)">' + '<button type="button" class="close" data-dismiss="alert" aria-hidden="true" ng-click="growlMessages.deleteMessage(message)" ng-show="!message.disableCloseButton">&times;</button>' + '<button type="button" class="close" aria-hidden="true" ng-show="showCountDown(message)">{{message.countdown}}</button>' + '<h4 class="growl-title" ng-show="message.title" ng-bind="message.title"></h4>' + '<div class="growl-message" ng-bind-html="message.text"></div>' + '</div>' + '</div>');
+      $templateCache.put('templates/growl/growl.html', '<div class="growl-container" ng-class="wrapperClasses()">' + '<div class="growl-item alert" ng-repeat="message in growlMessages.directives[referenceId].messages" ng-class="alertClasses(message)" ng-click="stopTimeoutClose(message)">' + '<button type="button" class="close" data-dismiss="alert" aria-hidden="true" ng-click="growlMessages.deleteMessage(message)" ng-show="!message.disableCloseButton">&times;</button>' + '<button type="button" class="close" aria-hidden="true" ng-show="showCountDown(message)">{{message.countdown}}</button>' + '<h4 class="growl-title" ng-show="message.title" ng-bind="message.title"></h4>' + '<div class="growl-message"><span ng-bind-html="message.text"></span><span class="restore" ng-show="message.showRestore" ng-click="growlMessages.restore($event, message)">{{ message.restoreTitle }}</span></div>' + '</div>' + '</div>');
     }
   }
 ]);
@@ -201,6 +201,7 @@ angular.module('angular-growl').provider('growl', function () {
         if (translate && message.translateMessage) {
           message.text = translate(message.text, message.variables) || message.text;
           message.title = translate(message.title) || message.title;
+          message.restoreTitle = translate(message.restoreTitle) || message.restoreTitle;
         } else {
           var polation = $interpolate(message.text);
           message.text = polation(message.variables);
@@ -232,7 +233,9 @@ angular.module('angular-growl').provider('growl', function () {
             message.text = $sce.trustAsHtml(String(newText));
           },
           onclose: _config.onclose,
-          onopen: _config.onopen
+          onopen: _config.onopen,
+          showRestore: typeof _config.onrestore === 'function',
+          restoreTitle: _config.restoreTitle || 'Restore'
         };
         return broadcastMessage(message);
       }
@@ -413,6 +416,17 @@ angular.module('angular-growl').service('growlMessages', [
       }
       if (typeof message.onclose === 'function') {
         message.onclose();
+      }
+    };
+    this.restore = function (event, message) {
+      event.stopPropagation();
+      var messages = this.getAllMessages(message.referenceId), index = messages.indexOf(message);
+      if (index > -1) {
+        messages[index].close = true;
+        messages.splice(index, 1);
+      }
+      if (typeof message.onrestore === 'function') {
+        message.onrestore();
       }
     };
   }

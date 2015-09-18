@@ -204,6 +204,7 @@ angular.module("angular-growl").provider("growl", function () {
       if (translate && message.translateMessage) {
         message.text = translate(message.text, message.variables) || message.text;
         message.title = translate(message.title) || message.title;
+        message.restoreTitle = translate(message.restoreTitle) || message.restoreTitle;
       } else {
         var polation = $interpolate(message.text);
         message.text = polation(message.variables);
@@ -237,7 +238,9 @@ angular.module("angular-growl").provider("growl", function () {
           message.text = $sce.trustAsHtml(String(newText));
         },
         onclose: _config.onclose,
-        onopen: _config.onopen
+        onopen: _config.onopen,
+        showRestore: typeof _config.onrestore === 'function',
+        restoreTitle: _config.restoreTitle || 'Restore'
       };
 
       return broadcastMessage(message);
