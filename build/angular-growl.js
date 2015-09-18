@@ -428,6 +428,7 @@ angular.module('angular-growl').service('growlMessages', [
         messages.splice(index, 1);
       }
       if (typeof message.onrestore === 'function') {
+        message.isRestore = true;
         message.onrestore();
       }
     };
